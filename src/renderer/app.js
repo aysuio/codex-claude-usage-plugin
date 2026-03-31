@@ -97,11 +97,11 @@
       claudeError.classList.remove('visible');
 
       const fh = data.claude.fiveHour;
-      setBar(claudeMinBar, claudeMinPct, fh?.pct);
       setBar(claude5hBar, claude5hPct, fh?.pct);
       claude5hReset.textContent = formatResetTime(fh?.resetsAt);
 
       const sd = data.claude.sevenDay;
+      setBar(claudeMinBar, claudeMinPct, sd?.pct);
       setBar(claude7dBar, claude7dPct, sd?.pct);
       claude7dReset.textContent = formatResetTime(sd?.resetsAt);
 
@@ -117,11 +117,11 @@
       codexError.classList.remove('visible');
 
       const pri = data.codex.primary;
-      setBar(codexMinBar, codexMinPct, pri?.pct);
       setBar(codex5hBar, codex5hPct, pri?.pct);
       codex5hReset.textContent = formatResetTime(pri?.resetsAt);
 
       const sec = data.codex.secondary;
+      setBar(codexMinBar, codexMinPct, sec?.pct);
       setBar(codex7dBar, codex7dPct, sec?.pct);
       codex7dReset.textContent = formatResetTime(sec?.resetsAt);
     }
