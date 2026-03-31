@@ -1,0 +1,13 @@
+appId: com.usage-widget.app
+productName: Usage Widget
+directories:
+  output: dist
+win:
+  target: nsis
+  icon: assets/icon.png
+nsis:
+  oneClick: true
+  perMachine: false
+files:
+  - src/**/*
+  - assets/**/*
