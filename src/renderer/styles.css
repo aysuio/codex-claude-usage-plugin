@@ -1,0 +1,256 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  color: #e0e0e0;
+  background: transparent;
+  overflow: hidden;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+#widget {
+  border-radius: 10px;
+  background: rgba(30, 30, 40, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  overflow: hidden;
+}
+
+/* --- Mini Mode --- */
+.mini-view {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  gap: 4px;
+  position: relative;
+}
+
+.card-view {
+  display: none;
+}
+
+.mini-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+}
+
+.mini-icon {
+  width: 16px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.mini-label {
+  width: 44px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #b0b0b0;
+}
+
+.mini-pct {
+  width: 36px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.expand-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 10px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  -webkit-app-region: no-drag;
+}
+
+.expand-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+/* --- Card Mode --- */
+#widget.card .mini-view {
+  display: none;
+}
+
+#widget.card .card-view {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.card-buttons {
+  display: flex;
+  gap: 4px;
+  -webkit-app-region: no-drag;
+}
+
+.card-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.card-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+.card-section {
+  padding: 10px 14px;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #b0b0b0;
+  margin-bottom: 8px;
+}
+
+.card-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 20px;
+}
+
+.row-label {
+  width: 22px;
+  font-size: 11px;
+  color: #888;
+  font-weight: 500;
+}
+
+.row-pct {
+  width: 36px;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-reset {
+  font-size: 10px;
+  color: #666;
+  padding-left: 30px;
+  margin-bottom: 6px;
+}
+
+.card-sub {
+  font-size: 10px;
+  color: #666;
+  padding-left: 30px;
+}
+
+.card-error {
+  font-size: 11px;
+  color: #e57373;
+  padding: 4px 0;
+  display: none;
+}
+
+.card-error.visible {
+  display: block;
+}
+
+.card-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  -webkit-app-region: no-drag;
+}
+
+.footer-time {
+  font-size: 10px;
+  color: #666;
+}
+
+.refresh-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.refresh-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* --- Progress Bar --- */
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease, background-color 0.4s ease;
+  width: 0%;
+}
+
+/* Color thresholds */
+.progress-fill.green { background: #4caf50; }
+.progress-fill.yellow { background: #ff9800; }
+.progress-fill.red { background: #f44336; }
+.progress-fill.gray { background: #555; }
+
+/* --- Loading skeleton --- */
+.progress-fill.loading {
+  background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

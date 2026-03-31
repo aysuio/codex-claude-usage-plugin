@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <link rel="stylesheet" href="styles.css">
+  <title>Usage Widget</title>
+</head>
+<body>
+  <div id="widget" class="mini">
+    <!-- Mini Mode -->
+    <div class="mini-view">
+      <div class="mini-row" data-source="claude">
+        <span class="mini-icon">☁</span>
+        <span class="mini-label">Claude</span>
+        <div class="progress-bar"><div class="progress-fill" id="claude-mini-bar"></div></div>
+        <span class="mini-pct" id="claude-mini-pct">--%</span>
+      </div>
+      <div class="mini-row" data-source="codex">
+        <span class="mini-icon">⌘</span>
+        <span class="mini-label">Codex</span>
+        <div class="progress-bar"><div class="progress-fill" id="codex-mini-bar"></div></div>
+        <span class="mini-pct" id="codex-mini-pct">--%</span>
+      </div>
+      <button class="expand-btn" id="expand-btn" title="展开">▼</button>
+    </div>
+
+    <!-- Card Mode -->
+    <div class="card-view">
+      <div class="card-header">
+        <span class="card-title">Usage Monitor</span>
+        <div class="card-buttons">
+          <button class="card-btn" id="collapse-btn" title="收起">—</button>
+          <button class="card-btn" id="close-btn" title="最小化到托盘">×</button>
+        </div>
+      </div>
+
+      <div class="card-section">
+        <div class="section-title">☁ Claude</div>
+        <div class="card-row" id="claude-5h-row">
+          <span class="row-label">5h</span>
+          <div class="progress-bar"><div class="progress-fill" id="claude-5h-bar"></div></div>
+          <span class="row-pct" id="claude-5h-pct">--%</span>
+        </div>
+        <div class="row-reset" id="claude-5h-reset"></div>
+        <div class="card-row" id="claude-7d-row">
+          <span class="row-label">7d</span>
+          <div class="progress-bar"><div class="progress-fill" id="claude-7d-bar"></div></div>
+          <span class="row-pct" id="claude-7d-pct">--%</span>
+        </div>
+        <div class="row-reset" id="claude-7d-reset"></div>
+        <div class="card-sub" id="claude-sub-models"></div>
+        <div class="card-error" id="claude-error"></div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-section">
+        <div class="section-title">⌘ Codex</div>
+        <div class="card-row" id="codex-5h-row">
+          <span class="row-label">5h</span>
+          <div class="progress-bar"><div class="progress-fill" id="codex-5h-bar"></div></div>
+          <span class="row-pct" id="codex-5h-pct">--%</span>
+        </div>
+        <div class="row-reset" id="codex-5h-reset"></div>
+        <div class="card-row" id="codex-7d-row">
+          <span class="row-label">7d</span>
+          <div class="progress-bar"><div class="progress-fill" id="codex-7d-bar"></div></div>
+          <span class="row-pct" id="codex-7d-pct">--%</span>
+        </div>
+        <div class="row-reset" id="codex-7d-reset"></div>
+        <div class="card-error" id="codex-error"></div>
+      </div>
+
+      <div class="card-divider"></div>
+
+      <div class="card-footer">
+        <span class="footer-time" id="update-time">加载中...</span>
+        <button class="refresh-btn" id="refresh-btn" title="刷新">🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
