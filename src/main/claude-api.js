@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const https = require('https');
 
 const USAGE_URL = 'https://api.anthropic.com/api/oauth/usage';
 const BETA_HEADER = 'oauth-2025-04-20';
@@ -51,6 +50,78 @@ function parseClaudeUsage(raw) {
 }
 
 function fetchClaudeUsage(accessToken) {
+  // Use Electron's net module if available (handles system proxy correctly),
+  // fall back to Node https for testing
+  let netModule;
+  try {
+    netModule = require('electron').net;
+  } catch {
+    netModule = null;
+  }
+
+  if (netModule) {
+    return fetchWithElectronNet(netModule, accessToken);
+  }
+  return fetchWithNodeHttps(accessToken);
+}
+
+function fetchWithElectronNet(net, accessToken) {
+  return new Promise((resolve, reject) => {
+    const req = net.request({
+      url: USAGE_URL,
+      method: 'GET',
+    });
+
+    req.setHeader('Authorization', `Bearer ${accessToken}`);
+    req.setHeader('anthropic-beta', BETA_HEADER);
+
+    let body = '';
+    let timedOut = false;
+
+    const timer = setTimeout(() => {
+      timedOut = true;
+      req.abort();
+      reject(new Error('TIMEOUT'));
+    }, 30000);
+
+    req.on('response', (res) => {
+      res.on('data', (chunk) => { body += chunk.toString(); });
+      res.on('end', () => {
+        clearTimeout(timer);
+        if (timedOut) return;
+
+        if (res.statusCode === 429) {
+          reject(new Error('RATE_LIMITED'));
+          return;
+        }
+        if (res.statusCode === 401 || res.statusCode === 403) {
+          reject(new Error('AUTH_EXPIRED'));
+          return;
+        }
+        if (res.statusCode !== 200) {
+          reject(new Error(`HTTP_${res.statusCode}`));
+          return;
+        }
+        try {
+          const data = JSON.parse(body);
+          resolve(parseClaudeUsage(data));
+        } catch {
+          reject(new Error('PARSE_ERROR'));
+        }
+      });
+    });
+
+    req.on('error', (err) => {
+      clearTimeout(timer);
+      if (!timedOut) reject(new Error(`NETWORK_ERROR: ${err.message}`));
+    });
+
+    req.end();
+  });
+}
+
+function fetchWithNodeHttps(accessToken) {
+  const https = require('https');
   return new Promise((resolve, reject) => {
     const url = new URL(USAGE_URL);
     const options = {
@@ -89,7 +160,7 @@ function fetchClaudeUsage(accessToken) {
     });
 
     req.on('error', (err) => reject(new Error(`NETWORK_ERROR: ${err.message}`)));
-    req.setTimeout(10000, () => { req.destroy(); reject(new Error('TIMEOUT')); });
+    req.setTimeout(30000, () => { req.destroy(); reject(new Error('TIMEOUT')); });
     req.end();
   });
 }
