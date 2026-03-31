@@ -1,16 +1,44 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 const USAGE_URL = 'https://api.anthropic.com/api/oauth/usage';
 const BETA_HEADER = 'oauth-2025-04-20';
 
 function readCredentials(homeDir) {
+  // On macOS, try Keychain first (where Claude Code stores credentials)
+  if (process.platform === 'darwin') {
+    const token = readFromKeychain();
+    if (token) return token;
+  }
+
+  // Fallback: read from ~/.claude/.credentials.json (Windows + macOS fallback)
+  return readFromFile(homeDir);
+}
+
+function readFromKeychain() {
+  try {
+    const raw = execSync(
+      'security find-generic-password -s "Claude Code-credentials" -w',
+      { encoding: 'utf-8', timeout: 5000, stdio: ['pipe', 'pipe', 'pipe'] }
+    ).trim();
+    const parsed = JSON.parse(raw);
+    const token =
+      parsed?.claudeAiOauth?.accessToken ||
+      parsed?.accessToken ||
+      null;
+    return token || null;
+  } catch {
+    return null;
+  }
+}
+
+function readFromFile(homeDir) {
   try {
     const credPath = path.join(homeDir, '.claude', '.credentials.json');
     const raw = fs.readFileSync(credPath, 'utf-8');
     const parsed = JSON.parse(raw);
 
-    // Try claudeAiOauth.accessToken first, then top-level accessToken
     const token =
       parsed?.claudeAiOauth?.accessToken ||
       parsed?.accessToken ||
