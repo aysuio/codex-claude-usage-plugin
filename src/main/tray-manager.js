@@ -47,7 +47,7 @@ function createTrayManager({ win, onRefresh, store }) {
     ]);
   }
 
-  tray.setToolTip('Usage Widget');
+  tray.setToolTip('BurnRate');
   tray.setContextMenu(buildMenu());
 
   // Rebuild menu on show/hide to update label

@@ -71,18 +71,31 @@ function parseCodexUsage(homeDir) {
   const rateLimits = extractLastRateLimits(latestFile);
   if (!rateLimits) return null;
 
-  // Normalize Unix timestamps to ISO strings for consistency with Claude API
-  const toISO = (ts) => ts ? new Date(ts * 1000).toISOString() : null;
+  const now = Date.now();
+
+  // If reset time has passed, usage is 0% and roll forward to next reset
+  const resolve = (limit) => {
+    const pct = limit?.used_percent ?? 0;
+    if (!limit?.resets_at) return { pct, resetsAt: null };
+
+    const resetMs = limit.resets_at * 1000;
+    if (resetMs >= now) {
+      return { pct, resetsAt: new Date(resetMs).toISOString() };
+    }
+
+    // Stale: roll forward by window_minutes to find next reset
+    const windowMs = (limit.window_minutes || 300) * 60 * 1000;
+    let next = resetMs;
+    while (next < now) next += windowMs;
+    return { pct: 0, resetsAt: new Date(next).toISOString() };
+  };
+
+  const pri = resolve(rateLimits.primary);
+  const sec = resolve(rateLimits.secondary);
 
   return {
-    primary: {
-      pct: rateLimits.primary?.used_percent ?? 0,
-      resetsAt: toISO(rateLimits.primary?.resets_at),
-    },
-    secondary: {
-      pct: rateLimits.secondary?.used_percent ?? 0,
-      resetsAt: toISO(rateLimits.secondary?.resets_at),
-    },
+    primary: { pct: pri.pct, resetsAt: pri.resetsAt },
+    secondary: { pct: sec.pct, resetsAt: sec.resetsAt },
     planType: rateLimits.plan_type ?? 'unknown',
   };
 }

@@ -1,5 +1,5 @@
-appId: com.usage-widget.app
-productName: Usage Widget
+appId: com.burnrate.app
+productName: BurnRate
 directories:
   output: dist
 win:
